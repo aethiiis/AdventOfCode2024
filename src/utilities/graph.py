@@ -86,3 +86,28 @@ class Graph:
         xmin, xmax, ymin, ymax = self.get_dim()
 
         return [[self.grid.get(Pos(i, j), 0) for i in range(xmax-xmin+1)] for j in range(ymax-ymin+1)]
+    
+    def neighbors(self, element:Pos) -> list[Pos]:
+        l:list[Pos] = []
+        dims:tuple = self.get_dim()
+
+        xmin = dims[0]
+        xmax = dims[1]
+        ymin = dims[2]
+        ymax = dims[3]
+
+        up:Pos = Pos(x = element.x, y = element.y - 1)
+        down:Pos = Pos(x = element.x, y = element.y + 1)
+        left:Pos = Pos(x = element.x - 1, y = element.y)
+        right:Pos = Pos(x = element.x + 1, y = element.y)
+
+        if up.x >= xmin and up.x <= xmax and up.y >= ymin and up.y <= ymax:
+            l.append(up)
+        if down.x >= xmin and down.x <= xmax and down.y >= ymin and down.y <= ymax:
+            l.append(down)
+        if left.x >= xmin and left.x <= xmax and left.y >= ymin and left.y <= ymax:
+            l.append(left)
+        if right.x >= xmin and right.x <= xmax and right.y >= ymin and right.y <= ymax:
+            l.append(right)
+        
+        return l
