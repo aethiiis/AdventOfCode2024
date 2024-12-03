@@ -19,11 +19,11 @@ def part1():
     right.sort()
 
     # Calculate the total distance
-    sum = 0
+    total_distance = 0
     for i in range(len(left)):
-        sum += abs(left[i] - right[i])
+        total_distance += abs(left[i] - right[i])
 
-    return sum
+    return total_distance
 
 def part2():
     left, right = processing()
@@ -33,11 +33,11 @@ def part2():
     r = Counter(right)
     
     # Calculate the similarity score
-    sum = 0
+    similarity_score = 0
     for key, value in l.items():
-        sum += 0 if key not in r else key * value * r[key]
+        similarity_score += 0 if key not in r else key * value * r[key]
     
-    return sum
+    return similarity_score
 
 if __name__ == "__main__":
     print(part1())

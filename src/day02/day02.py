@@ -9,20 +9,20 @@ def part1():
     lines:list[list[int]] = processing()
 
     # Iterate through the lines to check whether they're safe
-    sum = 0
+    count = 0
     for i in range(len(lines)):
         safe = check_safe(lines[i])
 
         if safe:
-            sum += 1
+            count += 1
     
-    return sum
+    return count
 
 def part2():
     lines:list[list[int]] = processing()
 
     # Iterate through the lines to check whether they're safe
-    sum = 0
+    count = 0
     for i in range(len(lines)):
         safe = check_safe(lines[i])
 
@@ -35,16 +35,15 @@ def part2():
                     break
 
         if safe:
-            sum += 1
+            count += 1
 
-    return sum
+    return count
 
 def check_safe(line:list) -> bool:
     # Checks whether an individual report is safe
     safe = True
     increase = 0
-    security = False
-
+    
     for j in range(len(line) - 1):
         if increase == 0:
             if line[j] > line[j+1] and 1 <= abs(line[j] - line[j+1]) <= 3:
