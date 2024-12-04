@@ -87,6 +87,11 @@ class Graph:
 
         return [[self.grid.get(Pos(i, j), 0) for i in range(xmax-xmin+1)] for j in range(ymax-ymin+1)]
     
+    def from_list(self, liste:list[list]):
+        for i in range(len(liste)):
+            for j in range(len(liste[i])):
+                self.grid[Pos(i, j)] = liste[i][j]
+    
     def neighbors(self, element:Pos) -> list[Pos]:
         l:list[Pos] = []
         dims:tuple = self.get_dim()
