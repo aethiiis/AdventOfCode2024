@@ -1,95 +1,74 @@
-def processing():
+def part1() -> int:
     disk_map = open("src/day09/input.txt").read()
-    
-    disk = []
+    disk:list[int] = []
+    blanks:list[int] = []
 
-    for i in range(len(disk_map)):
+    pos:int = 0
+
+    for i, char in enumerate(disk_map):
+        x = int(char)
         if i%2 == 0:
-            for _ in range(int(disk_map[i])):
-                disk.append(i//2)
-
-        else:
-            for _ in range(int(disk_map[i])):
-                disk.append(".")
-    
-    #print(disk[::-1])
-    return disk, disk_map
-
-def checksum(disk):
-    sum = 0
-    for i in range(len(disk)):
-        if disk[i] == ".":
-            continue
-        sum += i * disk[i]
-    
-    return sum
-
-def find_position_blocks(blocks, gaps):
-    positions = [(0, blocks[0])]
-    blocks = blocks[1:]
-
-    while len(blocks) != 0:
-        positions.append((positions[-1][1] + gaps[0], positions[-1][1] + gaps[0] + blocks[0]))
-        blocks = blocks[1:]
-        gaps = gaps[1:]
-
-    return positions
-
-def part1():
-    disk, _ = processing()
-
-    incomplete = True
-
-    free:int
-    last_free = 0
-    move:int
-    last_move = len(disk) - 1
-
-    while incomplete:
-        # Trouver un espace libre
-        for i in range(last_free, len(disk), 1):
-            if disk[i] == ".":
-                free = i
-                break
+            disk += [i//2] * x
         
-        # Trouver un chiffre à déplacer
-        for i in range(last_move, -1, -1):
-            if disk[i] != ".":
-                move = i
+        else:
+            disk += [-1] * x
+    
+    blanks = [i for i, x in enumerate(disk) if x == -1]
+
+    for i in blanks:
+        while disk[-1] == -1: # removes end of string -1
+            disk.pop()
+        
+        if len(disk) <= i: # for the case of 0...1 -> 01... -> 01 <= stop it here
+            break
+
+        disk[i] = disk.pop()
+
+    return sum(i * x for i, x in enumerate(disk))
+
+def part2() -> int:
+    disk_map = open("src/day09/input.txt").read()
+    files:dict[int, tuple[int, int]] = {}
+    blanks:list[int] = []
+
+    fid:int = 0
+    pos:int = 0
+
+    for i, char in enumerate(disk_map):
+        x = int(char)
+        if i%2 == 0:
+            files[fid] = (pos, x)
+            fid += 1
+
+        else:
+            if x != 0:
+                blanks.append((pos, x))
+        
+        pos += x
+    
+    while fid > 0:
+        fid -= 1
+        pos, size = files[fid]
+
+        for i, (start, length) in enumerate(blanks):
+
+            if start >= pos:
+                blanks = blanks[:i]
                 break
 
-        if free > move:
-            incomplete = False
-        else:
-            last_free = free
-            last_move = move
+            if size <= length:
+                files[fid] = (start, size)
 
-            disk[free], disk[move] = disk[move], disk[free]
+                if size == length:
+                    blanks.pop(i)
+                
+                else:
+                    blanks[i] = (start + size, length - size)
+                
+                break
     
-    return checksum(disk)
-    
-def part2():
-    disk, disk_map = processing()
-    gaps = list(map(int, disk_map[1::2]))
-    blocks = list(map(int, disk_map[::2]))
-
-    positions = find_position_blocks(blocks, gaps)
-    for i in range(len(blocks)-1, -1, -1):
-        block = blocks[i]
-
-        gap_count = 0
-        for j in range(0, len(disk), 1):
-            if disk[j] == ".":
-                gap_count += 1
-            
-                if gap_count == block and j-block+1 < positions[i][0]:
-                    disk[j-block+1:j+1], disk[positions[i][0]:positions[i][1]] = disk[positions[i][0]:positions[i][1]], disk[j-block+1:j+1]
-                    break
-            
-            else:
-                gap_count = 0
-    
-    return checksum(disk)
+    #return sum((value * (pos + i)) for value, (pos, size) in files.items() for i in range(size))
+    return sum(fid * size * (2 * pos + size - 1) // 2 for fid, (pos, size) in files.items())
 
 if __name__ == "__main__":
     print(part1())

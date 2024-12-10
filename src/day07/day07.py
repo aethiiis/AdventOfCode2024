@@ -7,6 +7,22 @@ def processing():
 
     return equations
 
+def obtainable(result, numbers, concat):
+    if len(numbers) == 1:
+        return result == numbers[0]
+
+    if result % numbers[-1] == 0 and obtainable(result // numbers[-1], numbers[:-1], concat):
+        return True
+
+    if result > numbers[-1] and obtainable(result - numbers[-1], numbers[:-1], concat):
+        return True
+    
+    if concat:
+        r, n = str(result), str(numbers[-1])
+        
+        if len(r) > len(n) and r.endswith(n) and obtainable(int(r[:-len(n)]), numbers[:-1], concat):
+            return True
+
 def part1():
     equations = processing()
     sum = 0
@@ -15,24 +31,8 @@ def part1():
         result = equation[0]
         numbers = equation[1]
 
-        # 0 = +   1 = *
-        combinations = [list(combination) for combination in product([0, 1], repeat=len(numbers) - 1)]
-        
-        for combination in combinations:
-            intermediate = numbers[0]
-
-            for i in range(len(combination)):
-                operation = combination[i]
-
-                if operation == 0:
-                    intermediate += numbers[i+1]
-                
-                else:
-                    intermediate *= numbers[i+1]
-            
-            if intermediate == result:
-                sum += result
-                break
+        if obtainable(result, numbers, False):
+            sum += result
     
     return sum
 
@@ -44,27 +44,8 @@ def part2():
         result = equation[0]
         numbers = equation[1]
 
-        # 0 = +  1 = *   2 = ||
-        combinations = [list(combination) for combination in product([0, 1, 2], repeat=len(numbers) - 1)]
-        
-        for combination in combinations:
-            intermediate = numbers[0]
-
-            for i in range(len(combination)):
-                operation = combination[i]
-
-                if operation == 0:
-                    intermediate += numbers[i+1]
-                
-                elif operation == 1:
-                    intermediate *= numbers[i+1]
-                
-                else:
-                    intermediate = int(str(intermediate) + str(numbers[i+1]))
-            
-            if intermediate == result:
-                sum += result
-                break
+        if obtainable(result, numbers, True):
+            sum += result
     
     return sum
 
