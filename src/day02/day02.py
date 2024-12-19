@@ -1,70 +1,21 @@
-def processing():
-    # Extract raw data
-    with open("src/day02/input.txt", "r") as input:
-        lines = [[int(num) for num in line.split()] for line in input]
-    
-    return lines
+def processing() -> list[list[int]]:
+    return [list(map(int, level.split())) for level in open("src/day02/input.txt")]
 
-def part1():
-    lines:list[list[int]] = processing()
 
-    # Iterate through the lines to check whether they're safe
-    count = 0
-    for i in range(len(lines)):
-        safe = check_safe(lines[i])
+def check_safe(level: list, tolerance: int = 0) -> bool:
+    for i in range(len(level)-1):
+        if not 1 <= level[i] - level[i+1] <= 3:
+            return tolerance and any(check_safe(level[j-1:j] + level[j+1:]) for j in (i, i+1))
+    return True
 
-        if safe:
-            count += 1
-    
-    return count
 
-def part2():
-    lines:list[list[int]] = processing()
+def part1() -> int:
+    return sum([check_safe(level) or check_safe(level[::-1]) for level in processing()])
 
-    # Iterate through the lines to check whether they're safe
-    count = 0
-    for i in range(len(lines)):
-        safe = check_safe(lines[i])
 
-        # If initial check failed, check whether any sublist can pass
-        if not safe:
-            possibilites:list[list[int]] = [lines[i][:j] + lines[i][j+1:] for j in range(len(lines[i]))]
-            for j in range(len(possibilites)):
-                if check_safe(possibilites[j]):
-                    safe = True
-                    break
+def part2() -> int:
+    return sum([check_safe(level, 1) or check_safe(level[::-1], 1) for level in processing()])
 
-        if safe:
-            count += 1
-
-    return count
-
-def check_safe(line:list) -> bool:
-    # Checks whether an individual report is safe
-    safe = True
-    increase = 0
-    
-    for j in range(len(line) - 1):
-        if increase == 0:
-            if line[j] > line[j+1] and 1 <= abs(line[j] - line[j+1]) <= 3:
-                increase = 1
-            elif line[j] < line[j+1] and 1 <= abs(line[j] - line[j+1]) <= 3:
-                increase = -1
-            else:
-                safe = False
-                break
-        
-        elif increase == 1:
-            if line[j] < line[j+1] or abs(line[j] - line[j+1]) < 1 or abs(line[j] - line[j+1]) > 3:
-                safe = False
-                break
-
-        else:
-            if line[j] > line[j+1] or abs(line[j] - line[j+1]) < 1 or abs(line[j] - line[j+1]) > 3:
-                safe = False
-                break
-    
-    return safe
 
 if __name__ == "__main__":
     print(part1())

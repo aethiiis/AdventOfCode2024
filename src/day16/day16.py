@@ -1,9 +1,9 @@
 from queue import PriorityQueue
 
 def processing():
-    input = open("src/day16/input.txt").read().splitlines()
-    grid = {(r, c): v for r in range(len(input)) for c, v in enumerate(input[r])}
-    return grid, len(input), len(input[0])
+    i = open("src/day16/input.txt").read().splitlines()
+    grid = {(r, c): v for r in range(len(i)) for c, v in enumerate(i[r])}
+    return grid, len(i), len(i[0])
 
 def dijkstra(grid, starts, rows, cols):
     frontier = PriorityQueue()
