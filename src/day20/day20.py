@@ -18,23 +18,22 @@ def course(grid, rows, cols, start, end):
                 distances[r][c] = distances[position[0]][position[1]] + 1
                 path.append((r, c))
                 position = (r, c)
-
     return distances, path
 
 
 def part1():
     grid, rows, cols, start, end = processing()
-    distances_fs, path = course(grid, rows, cols, start, end)
+    distances, path = course(grid, rows, cols, start, end)
     return sum(1 if 0 < nr < rows - 1 and 0 < nc < cols - 1 and grid[nr][nc] != "#" and
-                    abs(distances_fs[r][c] - distances_fs[nr][nc]) >= 102 else 0
+                    abs(distances[r][c] - distances[nr][nc]) >= 102 else 0
                for (r, c) in path for (nr, nc) in [(r + 2, c), (r + 1, c + 1), (r, c + 2), (r - 1, c + 1)])
 
 
 def part2():
     grid, rows, cols, start, end = processing()
-    distances_fs, path = course(grid, rows, cols, start, end)
+    distances, path = course(grid, rows, cols, start, end)
     return sum(1 if 0 < nr < rows-1 and 0 < nc < cols-1 and grid[nr][nc] != "#" and
-                    distances_fs[r][c] - distances_fs[nr][nc] >= radius + 100 else 0
+                    distances[r][c] - distances[nr][nc] >= radius + 100 else 0
                for (r, c) in path for radius in range(2, 21) for dr in range(radius+1)
                for (nr, nc) in {(r+dr, c+radius-dr), (r+dr, c-radius+dr), (r-dr, c+radius-dr), (r-dr, c-radius+dr)})
 
